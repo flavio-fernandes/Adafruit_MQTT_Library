@@ -178,7 +178,7 @@ class Adafruit_MQTT {
   // Publish a message to a topic using the specified QoS level.  Returns true
   // if the message was published, false otherwise.
   bool publish(const char *topic, const char *payload, uint8_t qos = 0);
-  bool publish(const char *topic, uint8_t *payload, uint16_t bLen, uint8_t qos = 0);
+  bool publish(const char *topic, const uint8_t *payload, uint16_t bLen, uint8_t qos = 0);
 
   // Add a subscription to receive messages for a topic.  Returns true if the
   // subscription could be added or was already present, false otherwise.
@@ -245,7 +245,7 @@ class Adafruit_MQTT {
   uint8_t disconnectPacket(uint8_t *packet);
   static uint16_t packetAdditionalLen(uint16_t currLen);
   uint16_t publishPacket(uint8_t *packet, uint16_t maxPacketLen,
-                         const char *topic, uint8_t *payload, uint16_t bLen, uint8_t qos);
+                         const char *topic, const uint8_t *payload, uint16_t bLen, uint8_t qos);
   uint8_t subscribePacket(uint8_t *packet, const char *topic, uint8_t qos);
   uint8_t unsubscribePacket(uint8_t *packet, const char *topic);
   uint8_t pingPacket(uint8_t *packet);
@@ -262,7 +262,7 @@ class Adafruit_MQTT_Publish {
                                                 // This might be ignored and a higher precision value sent.
   bool publish(int32_t i);
   bool publish(uint32_t i);
-  bool publish(uint8_t *b, uint16_t bLen);
+  bool publish(const uint8_t *b, uint16_t bLen);
 
 
 private:
