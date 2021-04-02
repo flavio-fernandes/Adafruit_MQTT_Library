@@ -669,7 +669,11 @@ uint8_t Adafruit_MQTT::connectPacket(uint8_t *packet) {
   return len;
 }
 
-uint16_t Adafruit_MQTT::packetAdditionalLen(uint16_t currLen) {
+// packetAdditionalLen is a helper function used to figure out
+// how bigger the payload needs to be in order to account for
+// its variable length field. As per
+// http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Table_2.4_Size
+static uint16_t packetAdditionalLen(uint16_t currLen) {
   /* Increase length field based on current length */
   if (currLen < 128)
     return 0;
@@ -694,11 +698,13 @@ uint16_t Adafruit_MQTT::publishPacket(uint8_t *packet, const char *topic,
   if (qos > 0) {
     len += 2; // qos packet id
   }
-  // calculate additional bytes for length field (if any)
+  // Calculate additional bytes for length field (if any)
   uint16_t additionalLen = packetAdditionalLen(len + bLen);
 
-  // payload length
-  if (len + bLen + 2 + additionalLen <= maxPacketLen) {
+  // Payload length. When maxPacketLen provided is 0, let's
+  // assume buffer is big enough. Fingers crossed.
+  if (maxPacketLen == 0 ||
+      (len + bLen + 2 + additionalLen <= maxPacketLen)) {
     len += bLen + additionalLen;
   } else {
     // If we make it here, we got a pickle: the payload is not going
